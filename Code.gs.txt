@@ -1,14 +1,12 @@
-// ===== 설정 값 =====
+// 설정 값
 const SLACK_WEBHOOK_URL = 'url'; // Slack Webhook URL
 const SPREADSHEET_ID = 'id'; // 스프레드시트 ID
 const SHEET_NAME = 'M15 Test Report'; // 시트 이름
 const SLACK_BOT_TOKEN = 'token'; // Slack Bot Token (slash command용)
 
-// ===== 메인 함수 =====
+// 메인 함수
 
-/**
- * 매일 오전 8시 자동 실행 함수
- */
+// 매일 오전 8시 자동 실행 함수
 function sendDailyReport() {
   try {
     const currentData = getTestData();  
@@ -29,9 +27,8 @@ function sendDailyReport() {
   }
 }
 
-/**
- * 테스트 데이터 가져오기
- */
+// 테스트 데이터 가져오기
+ 
 function getTestData() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName(SHEET_NAME);
@@ -94,9 +91,7 @@ function getTestData() {
   return data;
 }
 
-/**
- * 이전 데이터 가져오기 (Properties Service 사용)
- */
+// 이전 데이터 가져오기 (Properties Service 사용)
 function getPreviousData() {
   const scriptProperties = PropertiesService.getScriptProperties();
   const previousDataJson = scriptProperties.getProperty('previousTestData');
@@ -108,17 +103,13 @@ function getPreviousData() {
   return null;
 }
 
-/**
- * 오늘 데이터 저장
- */
+// 오늘 데이터 저장
 function saveTodayData(data) {
   const scriptProperties = PropertiesService.getScriptProperties();
   scriptProperties.setProperty('previousTestData', JSON.stringify(data));
 }
 
-/**
- * 데이터 비교
- */
+// 데이터 비교
 function compareData(current, previous) {
   if (!previous) {
     return null;
@@ -135,9 +126,7 @@ function compareData(current, previous) {
   };
 }
 
-/**
- * Slack 메시지 생성
- */
+// Slack 메시지 생성
 function createSlackMessage(data, comparison) {
   const kstDate = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm');
   
@@ -295,9 +284,7 @@ function createSlackMessage(data, comparison) {
   return { blocks: blocks };
 }
 
-/**
- * Slack으로 메시지 전송
- */
+// Slack으로 메시지 전송
 function sendToSlack(message) {
   const options = {
     method: 'post',
@@ -308,9 +295,7 @@ function sendToSlack(message) {
   UrlFetchApp.fetch(SLACK_WEBHOOK_URL, options);
 }
 
-/**
- * 에러 메시지 전송
- */
+// 에러 메시지 전송
 function sendErrorToSlack(error) {
   const message = {
     blocks: [
@@ -327,9 +312,7 @@ function sendErrorToSlack(error) {
   sendToSlack(message);
 }
 
-/**
- * 수동 테스트 함수
- */
+// 수동 테스트 함수
 function testSendReport() {
   sendDailyReport();
 }

@@ -1,6 +1,4 @@
-/**
- * Slack Slash Command를 위한 Web App
- */
+// Slack Slash Command Web App
 function doPost(e) {
   try {
     const params = e.parameter;
@@ -26,13 +24,11 @@ function doPost(e) {
   }
 }
 
-/**
- * /qa-status 명령어 처리
- */
+// /qa-status 명령어 처리
 function handleQAStatusCommand(text) {
   const data = getTestData();
   
-  // 간단한 텍스트 응답 생성
+  // 스트 응답 생성
   let response = '*🧪 Current QA Test Status*\n';
   response += '```\n';
   response += `Build: ${data.buildInfo}\n`;
@@ -65,9 +61,7 @@ function handleQAStatusCommand(text) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-/**
- * GET 요청 처리 (테스트용)
- */
+// GET 요청 처리 - 테스트용
 function doGet(e) {
   return ContentService.createTextOutput('QA Test Report Web App is running!');
 }

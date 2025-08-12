@@ -1,9 +1,7 @@
 function myFunction() {
   
 }
-/**
- * 초기 설정 함수 - 한 번만 실행
- */
+// 초기 설정 함수 - 한 번만 실행
 function setupTriggers() {
   // 기존 트리거 삭제
   const triggers = ScriptApp.getProjectTriggers();
@@ -22,18 +20,14 @@ function setupTriggers() {
   console.log('Trigger set for daily 8 AM KST');
 }
 
-/**
- * Properties 초기화 (필요시)
- */
+// Properties 초기화
 function clearPreviousData() {
   const scriptProperties = PropertiesService.getScriptProperties();
   scriptProperties.deleteProperty('previousTestData');
   console.log('Previous data cleared');
 }
 
-/**
- * 현재 저장된 데이터 확인
- */
+//현재 저장된 데이터 확인
 function checkStoredData() {
   const scriptProperties = PropertiesService.getScriptProperties();
   const data = scriptProperties.getProperty('previousTestData');
