@@ -1,0 +1,90 @@
+/**
+ * Slack Slash Command를 위한 Web App
+ */
+function doPost(e) {
+  try {
+    const params = e.parameter;
+    
+    // Slack verification token 확인 (선택사항)
+    // if (params.token !== 'YOUR_SLACK_VERIFICATION_TOKEN') {
+    //   return ContentService.createTextOutput('Invalid token');
+    // }
+    
+    const command = params.command;
+    const text = params.text;
+    
+    // /qa-status 명령어 처리
+    if (command === '/qa-status') {
+      return handleQAStatusCommand(text);
+    }
+    
+    return ContentService.createTextOutput('Unknown command');
+    
+  } catch (error) {
+    console.error('Error in doPost:', error);
+    return ContentService.createTextOutput('Error: ' + error.toString());
+  }
+}
+
+/**
+ * /qa-status 명령어 처리
+ */
+function handleQAStatusCommand(text) {
+  const data = getTestData();
+  
+  // 간단한 텍스트 응답 생성
+  let response = '*🧪 Current QA Test Status*\n';
+  response += '```\n';
+  response += `Build: ${data.buildInfo}\n`;
+  response += `Date: ${Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm')}\n`;
+  response += '------------------------\n';
+  response += `Total Tests: ${data.total.tests}\n`;
+  response += `Pass: ${data.total.pass} (${data.total.passRate}%)\n`;
+  response += `Fail: ${data.total.fail}\n`;
+  response += `Blocked: ${data.total.blocked}\n`;
+  response += `N/A: ${data.total.na}\n`;
+  response += `N/T: ${data.total.nt}\n`;
+  response += '```';
+  
+  // 상세 정보 요청시
+  if (text === 'detail' || text === 'details') {
+    response += '\n*Category Details:*\n```\n';
+    data.categories.forEach(cat => {
+      response += `${cat.name}: ${cat.pass}/${cat.total} passed\n`;
+    });
+    response += '```';
+  }
+  
+  response += `\n<https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}|📊 View Full Report>`;
+  
+  return ContentService
+    .createTextOutput(JSON.stringify({
+      response_type: 'in_channel',
+      text: response
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * GET 요청 처리 (테스트용)
+ */
+function doGet(e) {
+  return ContentService.createTextOutput('QA Test Report Web App is running!');
+}
+
+function testDoPost() {
+  const e = {
+    parameter: {
+      command: '/qa-status',
+      text: ''
+    }
+  };
+  
+  try {
+    const result = doPost(e);
+    // getMimeType() 대신 getContent()만 출력
+    console.log('Response:', result.getContent());
+  } catch (error) {
+    console.error('Error:', error.toString());
+  }
+}

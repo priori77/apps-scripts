@@ -1,0 +1,49 @@
+function myFunction() {
+  
+}
+/**
+ * 초기 설정 함수 - 한 번만 실행
+ */
+function setupTriggers() {
+  // 기존 트리거 삭제
+  const triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(trigger => {
+    ScriptApp.deleteTrigger(trigger);
+  });
+  
+  // 매일 오전 8시 트리거 설정
+  ScriptApp.newTrigger('sendDailyReport')
+    .timeBased()
+    .everyDays(1)
+    .atHour(8)
+    .inTimezone('Asia/Seoul')
+    .create();
+  
+  console.log('Trigger set for daily 8 AM KST');
+}
+
+/**
+ * Properties 초기화 (필요시)
+ */
+function clearPreviousData() {
+  const scriptProperties = PropertiesService.getScriptProperties();
+  scriptProperties.deleteProperty('previousTestData');
+  console.log('Previous data cleared');
+}
+
+/**
+ * 현재 저장된 데이터 확인
+ */
+function checkStoredData() {
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const data = scriptProperties.getProperty('previousTestData');
+  
+  if (data) {
+    console.log('Stored data:', JSON.parse(data));
+  } else {
+    console.log('No stored data found');
+  }
+}
+
+
+
